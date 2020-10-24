@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
-from mws import MWS
+from .mws import MWS
 
 
 class OffAmazonPayments(MWS):
-    """
-    Amazon OffAmazonPayments Sandbox API.
-
-    Docs:
-    https://pay.amazon.com/us/developer/documentation/apireference/201751630
-    """
-
     SANDBOX_URI = "/OffAmazonPayments_Sandbox/2013-01-01/"
     URI = "/OffAmazonPayments/2013-01-01/"
     VERSION = "2013-01-01"
@@ -20,11 +14,11 @@ class OffAmazonPayments(MWS):
             extra_data=dict(
                 Action="Authorize",
                 AmazonOrderReferenceId=order_ref,
-                AuthorizationReferenceId=auth_id,
-                TransactionTimeout=timeout,
+                AuthorizationReferenceId=str(auth_id),
+                TransactionTimeout=str(timeout),
                 **{
                     "AuthorizationAmount.Amount": "{:.2f}".format(order_total),
-                    "AuthorizationAmount.CurrencyCode": "USD",
+                    "AuthorizationAmount.CurrencyCode": "USD"
                 }
             )
         )
@@ -32,7 +26,8 @@ class OffAmazonPayments(MWS):
     def get_authorization_status(self, auth_id):
         return self.make_request(
             extra_data=dict(
-                Action="GetAuthorizationDetails", AmazonAuthorizationId=auth_id
+                Action="GetAuthorizationDetails",
+                AmazonAuthorizationId=auth_id
             )
         )
 
@@ -59,7 +54,10 @@ class OffAmazonPayments(MWS):
 
     def get_capture_details(self, capture_id):
         return self.make_request(
-            extra_data=dict(Action="GetCaptureDetails", AmazonCaptureId=capture_id)
+            extra_data=dict(
+                Action="GetCaptureDetails",
+                AmazonCaptureId=capture_id
+            )
         )
 
     def close_authorization(self, auth_id):
@@ -68,7 +66,10 @@ class OffAmazonPayments(MWS):
         the authorization has been captured.
         """
         return self.make_request(
-            extra_data=dict(Action="CloseAuthorization", AmazonAuthorizationId=auth_id)
+            extra_data=dict(
+                Action="CloseAuthorization",
+                AmazonAuthorizationId=auth_id
+            )
         )
 
     def refund(self, capture_id, amount, refund_id, notes="", currency="USD"):
@@ -89,7 +90,7 @@ class OffAmazonPayments(MWS):
                 SellerRefundNote=notes,
                 **{
                     "RefundAmount.Amount": "{:.2f}".format(amount),
-                    "RefundAmount.CurrencyCode": currency,
+                    "RefundAmount.CurrencyCode": currency
                 }
             )
         )
@@ -101,22 +102,27 @@ class OffAmazonPayments(MWS):
         you can call this operation to get the current status.
         """
         return self.make_request(
-            extra_data=dict(Action="GetRefundDetails", AmazonRefundId=refund_id)
+            extra_data=dict(
+                Action="GetRefundDetails",
+                AmazonRefundId=refund_id
+            )
         )
 
-    def get_billing_agreement_details(self, order_ref, address_consent_token):
+    def get_billing_agreement_details(self, order_ref,
+                                      address_consent_token):
         return self.make_request(
             extra_data=dict(
                 Action="GetBillingAgreementDetails",
                 AmazonBillingAgreementId=order_ref,
-                AddressConsentToken=address_consent_token,
+                AddressConsentToken=address_consent_token
             )
         )
 
-    def get_order_reference_details(self, order_ref, address_consent_token=""):
+    def get_order_reference_details(self, order_ref,
+                                    address_consent_token=""):
         kwargs = {}
         if address_consent_token:
-            kwargs["AddressConsentToken"] = address_consent_token
+            kwargs['AddressConsentToken'] = address_consent_token
 
         return self.make_request(
             extra_data=dict(
@@ -126,19 +132,13 @@ class OffAmazonPayments(MWS):
             )
         )
 
-    def set_order_reference_details(
-        self,
-        order_ref,
-        order_total,
-        store_name,
-        order_id=None,
-        note=None,
-        currency="USD",
-    ):
+    def set_order_reference_details(self, order_ref, order_total,
+                                    store_name, order_id=None, note=None, currency="USD"):
         params = {
-            "OrderReferenceAttributes.OrderTotal.Amount": order_total,
+            "OrderReferenceAttributes.OrderTotal.Amount": str(order_total),
             "OrderReferenceAttributes.OrderTotal.CurrencyCode": currency,
-            "OrderReferenceAttributes.SellerOrderAttributes.SellerOrderId": order_id,
+            "OrderReferenceAttributes.SellerOrderAttributes.SellerOrderId": str(
+                order_id),
             "OrderReferenceAttributes.SellerOrderAttributes.StoreName": store_name,
             "OrderReferenceAttributes.SellerNote": note,
         }
@@ -154,20 +154,23 @@ class OffAmazonPayments(MWS):
     def confirm_order_reference(self, order_ref):
         return self.make_request(
             extra_data=dict(
-                Action="ConfirmOrderReference", AmazonOrderReferenceId=order_ref,
+                Action="ConfirmOrderReference",
+                AmazonOrderReferenceId=order_ref,
             )
         )
 
     def cancel_order_reference(self, order_ref):
         return self.make_request(
             extra_data=dict(
-                Action="CancelOrderReference", AmazonOrderReferenceId=order_ref
+                Action="CancelOrderReference",
+                AmazonOrderReferenceId=order_ref
             )
         )
 
     def close_order_reference(self, order_ref):
         return self.make_request(
             extra_data=dict(
-                Action="CloseOrderReference", AmazonOrderReferenceId=order_ref
+                Action="CloseOrderReference",
+                AmazonOrderReferenceId=order_ref
             )
         )

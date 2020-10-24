@@ -1,38 +1,4 @@
 # -*- coding: utf-8 -*-
-from .mws import Marketplaces, MWS, MWSError
-from .apis import (
-    Feeds,
-    Finances,
-    InboundShipments,
-    Inventory,
-    MerchantFulfillment,
-    OffAmazonPayments,
-    Orders,
-    OutboundShipments,
-    Products,
-    Recommendations,
-    Reports,
-    Sellers,
-    Subscriptions,
-    EasyShip,
-)
+from __future__ import absolute_import
 
-__all__ = [
-    "EasyShip",
-    "Feeds",
-    "Finances",
-    "InboundShipments",
-    "Inventory",
-    "Marketplaces",
-    "MerchantFulfillment",
-    "MWS",
-    "MWSError",
-    "OffAmazonPayments",
-    "Orders",
-    "OutboundShipments",
-    "Products",
-    "Recommendations",
-    "Reports",
-    "Sellers",
-    "Subscriptions",
-]
+from .mws import *  # noqa: F401, F403
